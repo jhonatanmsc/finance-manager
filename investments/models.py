@@ -21,6 +21,7 @@ class Investment(models.Model):
     post_fixed_index = models.CharField(max_length=50, blank=True, null=True, help_text="Índice de pós-fixação, como Selic, IPCA, etc.")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="investments", null=True, blank=True)
     due_date = models.DateField(null=True, blank=True, verbose_name="Data de vencimento")
+    deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
 
     def set_history(self, history):
         self.history = json.dumps(history)

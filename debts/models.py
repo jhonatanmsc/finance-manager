@@ -18,6 +18,7 @@ class Debt(models.Model):
     due_day = models.CharField(max_length=5, null=True, blank=True, verbose_name="Vencimento")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="debts", null=True, blank=True)
     due_date = models.DateField(null=True, blank=True, verbose_name="Data de vencimento")
+    deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
 
     def set_history(self, history):
         self.history = json.dumps(history)

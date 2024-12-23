@@ -14,6 +14,7 @@ class Goal(models.Model):
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     target_date = models.DateField(null=True, blank=True, verbose_name="Estimativa de Conclusão")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="goals", null=True, blank=True)
+    concluded_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
 
     def set_history(self, history):
         self.history = json.dumps(history)

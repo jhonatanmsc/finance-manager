@@ -16,6 +16,7 @@ class Credit(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="credits", null=True, blank=True)
+    deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
 
     def set_history(self, history):
         self.history = json.dumps(history)

@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from earnings.models import Earning
+from parameters.models import Parameter
 
 
-@admin.register(Earning)
-class EarningsAdmin(admin.ModelAdmin):
+@admin.register(Parameter)
+class ParameterAdmin(admin.ModelAdmin):
     exclude = ('user',)
 
     def get_queryset(self, request):

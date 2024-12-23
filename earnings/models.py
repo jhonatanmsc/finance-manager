@@ -8,7 +8,7 @@ from src.enums import RecurrenceEnum
 
 # Create your models here.
 
-class Earnings(models.Model):
+class Earning(models.Model):
     __tablename__ = 'earnings'
     title = models.CharField(max_length=100, verbose_name="Título")
     description = models.TextField(verbose_name='Descrição', null=True, blank=True)
@@ -19,6 +19,7 @@ class Earnings(models.Model):
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     payment_day = models.CharField(max_length=5, null=True, blank=True, verbose_name="Dia do recebimento")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="earnings", null=True, blank=True)
+    deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
 
     def set_history(self, history):
         self.history = json.dumps(history)

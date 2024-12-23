@@ -121,63 +121,44 @@ if (document.querySelector('.fixed-plugin')) {
 }
 
 //Set Sidebar Color
-function sidebarColor(a) {
+function sidebarColor(bdColor) {
   var parent = document.querySelector(".nav-link.active");
-  var color = a.getAttribute("data-color");
 
-  if (parent.classList.contains('bg-gradient-primary')) {
+  if (bdColor === 'primary') {
     parent.classList.remove('bg-gradient-primary');
   }
-  if (parent.classList.contains('bg-gradient-dark')) {
+  if (bdColor === 'dark') {
     parent.classList.remove('bg-gradient-dark');
   }
-  if (parent.classList.contains('bg-gradient-info')) {
+  if (bdColor === 'info') {
     parent.classList.remove('bg-gradient-info');
   }
-  if (parent.classList.contains('bg-gradient-success')) {
+  if (bdColor === 'success') {
     parent.classList.remove('bg-gradient-success');
   }
-  if (parent.classList.contains('bg-gradient-warning')) {
+  if (bdColor === 'warning') {
     parent.classList.remove('bg-gradient-warning');
   }
-  if (parent.classList.contains('bg-gradient-danger')) {
+  if (bdColor === 'danger') {
     parent.classList.remove('bg-gradient-danger');
   }
-  parent.classList.add('bg-gradient-' + color);
+  parent.classList.add('bg-gradient-' + bdColor);
 }
 
 // Set Sidebar Type
-function sidebarType(a) {
-  var parent = a.parentElement.children;
-  var color = a.getAttribute("data-class");
-  var body = document.querySelector("body");
+function sidebarType(bgType) {
   var bodyWhite = document.querySelector("body:not(.dark-version)");
-  var bodyDark = body.classList.contains('dark-version');
+  var bodyDark = true;
 
-  var colors = [];
-
-  for (var i = 0; i < parent.length; i++) {
-    parent[i].classList.remove('active');
-    colors.push(parent[i].getAttribute('data-class'));
-  }
-
-  if (!a.classList.contains('active')) {
-    a.classList.add('active');
-  } else {
-    a.classList.remove('active');
-  }
 
   var sidebar = document.querySelector('.sidenav');
 
-  for (var i = 0; i < colors.length; i++) {
-    sidebar.classList.remove(colors[i]);
-  }
-
-  sidebar.classList.add(color);
+  sidebar.classList.remove("bg-white");
+  sidebar.classList.add("bg-dark");
 
 
   // Remove text-white/text-dark classes
-  if (color == 'bg-transparent' || color == 'bg-white') {
+  if (bgType === 'bg-transparent' || bgType === 'bg-white') {
     var textWhites = document.querySelectorAll('.sidenav .text-white:not(.nav-link-text):not(.active)');
     for (let i = 0; i < textWhites.length; i++) {
       textWhites[i].classList.remove('text-white');
@@ -191,7 +172,7 @@ function sidebarType(a) {
     }
   }
 
-  if (color == 'bg-transparent' && bodyDark) {
+  if (bgType == 'bg-transparent' && bodyDark) {
     var textDarks = document.querySelectorAll('.navbar-brand .text-dark');
     for (let i = 0; i < textDarks.length; i++) {
       textDarks[i].classList.add('text-white');
@@ -201,7 +182,7 @@ function sidebarType(a) {
 
   // Remove logo-white/logo-dark
 
-  if ((color == 'bg-transparent' || color == 'bg-white') && bodyWhite) {
+  if ((bgType == 'bg-transparent' || bgType == 'bg-white') && bodyWhite) {
     var navbarBrand = document.querySelector('.navbar-brand-img');
     var navbarBrandImg = navbarBrand.src;
 
@@ -218,7 +199,7 @@ function sidebarType(a) {
     }
   }
 
-  if (color == 'bg-white' && bodyDark) {
+  if (bgType == 'bg-white' && bodyDark) {
     var navbarBrand = document.querySelector('.navbar-brand-img');
     var navbarBrandImg = navbarBrand.src;
 
@@ -655,7 +636,7 @@ function sidenavTypeOnResize() {
 
 
 // Light Mode / Dark Mode
-function darkMode(el) {
+function darkMode(checked) {
   const body = document.getElementsByTagName('body')[0];
   const hr = document.querySelectorAll('div:not(.sidenav) > hr');
   const hr_card = document.querySelectorAll('div:not(.bg-gradient-dark) hr');
@@ -676,7 +657,7 @@ function darkMode(el) {
 
   const svg = document.querySelectorAll('g');
 
-  if (!el.getAttribute("checked")) {
+  if (checked) {
     body.classList.add('dark-version');
     for (var i = 0; i < hr.length; i++) {
       if (hr[i].classList.contains('dark')) {
@@ -740,7 +721,6 @@ function darkMode(el) {
     for (var i = 0; i < card_border.length; i++) {
       card_border[i].classList.add('border-dark');
     }
-    el.setAttribute("checked", "true");
   } else {
     body.classList.remove('dark-version');
     for (var i = 0; i < hr.length; i++) {
@@ -806,7 +786,6 @@ function darkMode(el) {
     for (var i = 0; i < card_border_dark.length; i++) {
       card_border_dark[i].classList.remove('border-dark');
     }
-    el.removeAttribute("checked");
   }
 };
 
