@@ -7,7 +7,7 @@ from django.db import models
 class Parameter(models.Model):
     __tablename__ = 'parameters'
     name = models.CharField(max_length=100, verbose_name="Nome")
-    index = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Índice")
+    index = models.DecimalField(max_digits=10, decimal_places=3, verbose_name="Índice")
     description = models.TextField(verbose_name='Descrição', null=True, blank=True)
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="configs", null=True,

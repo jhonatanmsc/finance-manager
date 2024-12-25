@@ -1,19 +1,14 @@
 from datetime import datetime
 
 from django import urls
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import redirect_to_login
 from django.shortcuts import redirect
-from django.utils.decorators import classonlymethod
 from django.views.generic import TemplateView
 
 from debts.models import Debt
-from earnings.models import Earning
-from goals.models import Goal
+from goals.models import Goal, Contribution
 from parameters.models import Parameter
-from src import settings
 from src.enums import RecurrenceEnum
-from src.utils import real_currency, get_last_9_months, get_ipca
+from src.utils import real_currency, get_last_9_months, get_ipca, get_min_salary
 
 
 class DashboardView(TemplateView):
@@ -56,7 +51,10 @@ class DashboardView(TemplateView):
         debts = sum([debt.value for debt in debts])
         emergency_fund = Parameter.objects.filter(user=self.request.user, name='reserva_1').first()
         emergency_fund = emergency_fund.index
+        accounting_fee = Parameter.objects.filter(user=self.request.user, name='contabilidade').first()
+        accounting_fee = float(accounting_fee.index)
         goal = Goal.objects.filter(user=self.request.user, title="Reserva de Médio prazo").first()
+        context['sidebar_option'] = 'dashboard'
         context['debts'] = real_currency(debts)
         context['emergency_fund'] = real_currency(debts * emergency_fund)
         context['mid_fund'] = real_currency(goal.value)
@@ -65,8 +63,61 @@ class DashboardView(TemplateView):
         context['debt_history'] = last_debts_total
         context['current_year'] = current_year
         context['ipca'] = get_ipca(f'01/01/{current_year}', f'31/12/{current_year}')
+        min_salary = get_min_salary(f'01/01/{current_year}', f'31/12/{current_year}')
+        context['min_salary'] = real_currency(min_salary)
+        context['accounting_fee'] = real_currency(min_salary * accounting_fee)
         return context
 
 
 class BillingView(TemplateView):
     template_name = 'pages/billing.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if not self.request.user.is_authenticated:
+            return redirect(urls.reverse('admin:login'))
+
+        context['sidebar_option'] = 'billing'
+        return context
+
+
+class TableView(TemplateView):
+    template_name = 'pages/tables.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if not self.request.user.is_authenticated:
+            return redirect(urls.reverse('admin:login'))
+
+        goals = Goal.objects.filter(user=self.request.user)
+        contributions = Contribution.objects.filter(goal__user=self.request.user)
+        contrib_dict = {g.title: {'budget': g.value, 'amount': 0, 'status': 'aguardando'} for g in goals}
+        for contribution in contributions:
+            contrib_dict[contribution.goal.title]['amount'] += contribution.value * contribution.quantity
+            if contribution.goal.canceled_at is None and contribution.goal.concluded_at is None:
+                contrib_dict[contribution.goal.title]['status'] = 'ativo'
+            elif contribution.goal.canceled_at is not None:
+                contrib_dict[contribution.goal.title]['status'] = 'cancelado'
+            elif contribution.goal.concluded_at is not None:
+                contrib_dict[contribution.goal.title]['status'] = 'concluído'
+
+        for con in contrib_dict:
+            contrib = contrib_dict[con]
+            if contrib['amount'] <= 0:
+                contrib['completion'] = 0
+            else:
+                contrib['completion'] = '%.2f' % ((contrib['amount'] / contrib['budget']) * 100)
+            contrib['budget'] = real_currency(contrib['budget'])
+            contrib['amount'] = real_currency(contrib['amount'])
+
+            contrib_dict[con] = contrib
+
+
+        context['sidebar_option'] = 'table'
+        context['goals'] = goals
+        context['contributions'] = contrib_dict
+        return context
+
+
+class VirtualView(TemplateView):
+    template_name = 'pages/virtual-reality.html'

@@ -31,3 +31,10 @@ def get_ipca(dataInicial, dataFinal):
     dados = res.json()
     ipca_acumulado = sum(float(item['valor']) for item in dados)
     return ipca_acumulado
+
+
+def get_min_salary(dataInicial, dataFinal):
+    url = f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.1619/dados?formato=json&dataInicial={dataInicial}&dataFinal={dataFinal}"
+    res = requests.get(url)
+    dados = res.json()
+    return float(dados[0]['valor'])
