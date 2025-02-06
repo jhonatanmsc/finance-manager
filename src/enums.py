@@ -2,6 +2,22 @@ from django.db import models
 from django.utils.translation import gettext_lazy as admin_text
 
 
+class PaymentMethod(models.TextChoices):
+    CASH = "CASH", admin_text("Dinheiro")
+    CREDIT_CARD = "CREDIT_CARD", admin_text("Cartão de crédito")
+    DEBIT_CARD = "DEBIT_CARD", admin_text("Cartão de débito")
+    BANK_TRANSFER = "BANK_TRANSFER", admin_text("Transferencia bancária")
+    DIGITAL_WALLET = "DIGITAL_WALLET", admin_text("Digitall wallet")
+    CRYPTOCURRENCY = "CRYPTOCURRENCY", admin_text("Cryptocurrency")
+    CHECK = "CHECK", admin_text("Check")
+    OTHER = "OTHER", admin_text("Other")
+
+
+class PayerTypeEnum(models.TextChoices):
+    PF = "PF", admin_text("Prato Feito")
+    PJ = "PJ", admin_text("Pratos do José")
+
+
 class RecurrenceEnum(models.TextChoices):
     YEAR = 'YEAR', admin_text('Anual')
     MONTH = 'MONTHLY', admin_text('Mensal')

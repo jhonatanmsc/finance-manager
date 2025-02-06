@@ -3,6 +3,30 @@
 import os
 import sys
 
+# from goals.models import Contribution
+
+
+def map_all():
+    m_map = {
+        "Jaime": 1,
+        "Dominó Teresina": 1,
+        "Ramos": 1,
+        "Depósito Piauí": 1,
+        "Simão & CIA": 1,
+        "Madeireira R.Fonsêca": 1,
+        "JM Pré moldados": 1,
+        "100tenário": 1,
+        "Talysson Construções": 1,
+        "Elinaldo & CIA": 1,
+        "Ferro Norte": 1,
+        "Elton": 1,
+    }
+
+    # objs = Contribution.objects.all()
+    # for obj in objs:
+    #     obj.supplier_new = m_map[obj.supplier]
+    #     obj.save()
+    # print("Done.")
 
 def main():
     """Run administrative tasks."""

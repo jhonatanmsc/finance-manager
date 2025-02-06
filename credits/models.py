@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from src.enums import CreditTypeEnum
+from src.utils import real_currency
 
 
 class Credit(models.Model):
@@ -29,7 +30,9 @@ class Credit(models.Model):
         return self.history
 
     def __str__(self):
-        return f"#{self.id} {self.title}"
+        usado = sum([debt.value for debt in self.debts.all()])
+        total = f"usando R$ {real_currency(usado)} de R$ {real_currency(self.limit)} disponível"
+        return f"#{self.id} {self.title} | {total}"
 
     class Meta:
         verbose_name = "Crédito"

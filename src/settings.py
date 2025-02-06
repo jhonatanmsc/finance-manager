@@ -74,7 +74,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
             'libraries': {
-                'project_tags': 'src.template_tags.extra_tags',
+                'project_tags': 'src.template_tags.common_tags',
+                'goal_tags': 'src.template_tags.goal_tags',
             }
         },
     },

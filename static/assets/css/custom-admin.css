@@ -1,0 +1,60 @@
+/* Ocultar os botões de seleção padrão */
+.field-avaliacao input[type="radio"] {
+    display: none;
+}
+
+/* Container das estrelas */
+.field-avaliacao ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 5px;
+    position: relative;
+}
+
+/* Estilizar as estrelas */
+.field-avaliacao label {
+    font-size: 24px;
+    color: #ddd;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s;
+}
+
+/* Estilo para meia estrela */
+.field-avaliacao label:before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+    color: #f39c12;
+}
+
+/* Estilo para estrela inteira */
+.field-avaliacao label:after {
+    content: '★';
+    position: absolute;
+    left: 50%;
+    color: #ddd;
+}
+
+/* Hover para meia estrela */
+.field-avaliacao label:hover ~ label:before,
+.field-avaliacao label:hover:before {
+    color: #f39c12;
+    width: 50%;
+}
+
+/* Hover para estrelas completas */
+.field-avaliacao label:hover:after,
+.field-avaliacao label:hover ~ label:after {
+    color: #f39c12;
+}
+
+/* Estrelas selecionadas */
+.field-avaliacao input:checked + label:before,
+.field-avaliacao input:checked + label:after {
+    color: #f39c12;
+}

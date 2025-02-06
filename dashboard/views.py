@@ -1,13 +1,14 @@
 from datetime import datetime
 
 from django import urls
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 
 from debts.models import Debt
 from goals.models import Goal, Contribution
 from parameters.models import Parameter
-from src.enums import RecurrenceEnum
+from src.enums import RecurrenceEnum, PaymentMethod
 from src.utils import real_currency, get_last_9_months, get_ipca, get_min_salary
 
 
@@ -26,17 +27,26 @@ class DashboardView(TemplateView):
             Debt.objects
             .filter(user=self.request.user)
             .exclude(
-                recurrence=RecurrenceEnum.NONE,
-                due_date=None
+                Q(recurrence=RecurrenceEnum.NONE) | Q(payment_method__iexact=PaymentMethod.CASH.value)
             )
         )
         extra_debts = (
             Debt.objects
-            .filter(user=self.request.user, created_at__month=current_month, created_at__year=current_year)
+            .filter(
+                user=self.request.user,
+                created_at__month=current_month,
+                created_at__year=current_year
+            )
+            .exclude(Q(recurrence=RecurrenceEnum.NONE) | Q(payment_method__iexact=PaymentMethod.CASH.value))
         )
         last_debts = (
             Debt.objects
-            .filter(user=self.request.user, created_at__month__in=past_months, created_at__year=current_year)
+            .filter(
+                user=self.request.user,
+                created_at__month__in=past_months,
+                created_at__year=current_year
+            )
+            .exclude(Q(recurrence=RecurrenceEnum.NONE) | Q(payment_method__iexact=PaymentMethod.CASH.value))
             .order_by('-created_at')
         )
         last_debts_total = []
@@ -62,8 +72,8 @@ class DashboardView(TemplateView):
         context['last_9_months'] = last_9_months
         context['debt_history'] = last_debts_total
         context['current_year'] = current_year
-        context['ipca'] = get_ipca(f'01/01/{current_year}', f'31/12/{current_year}')
-        min_salary = get_min_salary(f'01/01/{current_year}', f'31/12/{current_year}')
+        context['ipca'] = get_ipca(f'01/01/{current_year}', datetime.now().strftime("%d/%m/%Y"))
+        min_salary = get_min_salary(f'01/01/{current_year}', datetime.now().strftime("%d/%m/%Y"))
         context['min_salary'] = real_currency(min_salary)
         context['accounting_fee'] = real_currency(min_salary * accounting_fee)
         return context
@@ -91,7 +101,7 @@ class TableView(TemplateView):
 
         goals = Goal.objects.filter(user=self.request.user)
         contributions = Contribution.objects.filter(goal__user=self.request.user)
-        contrib_dict = {g.title: {'budget': g.value, 'amount': 0, 'status': 'aguardando'} for g in goals}
+        contrib_dict = {g.title: {'id': g.id, 'budget': g.value, 'amount': 0, 'status': 'aguardando'} for g in goals}
         for contribution in contributions:
             contrib_dict[contribution.goal.title]['amount'] += contribution.value * contribution.quantity
             if contribution.goal.canceled_at is None and contribution.goal.concluded_at is None:
@@ -119,5 +129,21 @@ class TableView(TemplateView):
         return context
 
 
-class VirtualView(TemplateView):
-    template_name = 'pages/virtual-reality.html'
+class GoalDetailView(TemplateView):
+    template_name = "pages/profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if not self.request.user.is_authenticated:
+            return redirect(urls.reverse('admin:login'))
+        goal = Goal.objects.filter(id=kwargs['id']).first()
+        context['goal'] = goal
+        contributions = goal.contributions.filter(user=self.request.user)
+        groups = {}
+        for contribution in contributions:
+            if contribution.group_name not in groups:
+                groups[contribution.group_name] = contribution.value
+            else:
+                groups[contribution.group_name] += contribution.value
+        context['groups'] = groups
+        return context

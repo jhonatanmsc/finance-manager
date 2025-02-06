@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.models import User
 from django.db import models
 
-from src.enums import RecurrenceEnum
+from src.enums import RecurrenceEnum, PayerTypeEnum
 
 
 # Create your models here.
@@ -20,6 +20,8 @@ class Earning(models.Model):
     payment_day = models.CharField(max_length=5, null=True, blank=True, verbose_name="Dia do recebimento")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="earnings", null=True, blank=True)
     deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
+    expiration_date = models.DateTimeField(null=True, blank=True, verbose_name="Válido até")
+    payer_type = models.CharField(max_length=50, choices=PayerTypeEnum.choices, default=PayerTypeEnum.PF, verbose_name="Tipo")
 
     def set_history(self, history):
         self.history = json.dumps(history)
@@ -32,7 +34,8 @@ class Earning(models.Model):
         return self.history
 
     def __str__(self):
-        return f"#{self.id} {self.title}"
+        expiration = "Indeterminado" if self.expiration_date is None else self.expiration_date.strftime('%d/%m/%Y')
+        return f"#{self.id} {self.title} | {expiration}"
 
     class Meta:
         verbose_name = "Ativo"

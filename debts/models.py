@@ -3,7 +3,9 @@ import json
 from django.contrib.auth.models import User
 from django.db import models
 
-from src.enums import RecurrenceEnum
+from credits.models import Credit
+from src.enums import RecurrenceEnum, PaymentMethod
+from src.utils import real_currency
 
 
 class Debt(models.Model):
@@ -19,6 +21,8 @@ class Debt(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="debts", null=True, blank=True)
     due_date = models.DateField(null=True, blank=True, verbose_name="Data de vencimento")
     deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
+    credit_card = models.ForeignKey(Credit, on_delete=models.CASCADE, verbose_name="Cartão de credito", related_name="debts", null=True, blank=True)
+    payment_method = models.CharField(max_length=50, choices=PaymentMethod.choices, default=PaymentMethod.CASH, verbose_name="Método de pagamento")
 
     def set_history(self, history):
         self.history = json.dumps(history)
@@ -31,7 +35,8 @@ class Debt(models.Model):
         return self.history
 
     def __str__(self):
-        return f"#{self.id} {self.title}"
+        origem = "CC" if not self.credit_card else self.credit_card.title
+        return f"#{self.id} {self.title} | {self.payment_method} | R$ {real_currency(self.value)} {origem}"
 
     class Meta:
         verbose_name = "Débito"
