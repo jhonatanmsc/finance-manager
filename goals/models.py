@@ -80,8 +80,7 @@ class Contribution(models.Model):
         Goal, on_delete=models.CASCADE, related_name="contributions", verbose_name="Objetivo"
     )
     concluded_at = models.DateTimeField(null=True, blank=True, verbose_name="Executado em")
-    supplier = models.CharField(max_length=100, null=True, blank=True, verbose_name="Fornecedor")
-    supplier_new = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Fornecedor", related_name="contributions_new")
+    supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Fornecedor", related_name="contributions_new")
     group_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Grupo")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
 

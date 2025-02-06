@@ -22,10 +22,10 @@ class SupplierListFilter(admin.SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        contribs = Contribution.objects.all()
-        suppliers = {contr.supplier for contr in contribs}
+        suppliers = Supplier.objects.all()
         return [
-            (supplier, supplier) for supplier in suppliers
+            ("Nenhum", "Nenhum"),
+            *[(supplier.id, supplier.name) for supplier in suppliers]
         ]
 
     def queryset(self, request, queryset):
@@ -37,6 +37,8 @@ class SupplierListFilter(admin.SimpleListFilter):
         # Compare the requested value (either '80s' or '90s')
         # to decide how to filter the queryset.
         if self.value():
+            if self.value() == "Nenhum":
+                return queryset.filter(supplier=None)
             return queryset.filter(supplier=self.value())
 
 
@@ -59,8 +61,8 @@ class GoalAdmin(admin.ModelAdmin):
 
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
-    exclude = ('user', 'supplier')
-    list_display = ("title", "value", "supplier_new", "goal", "group_name", "quantity", "total", "concluded_at")
+    exclude = ('user',)
+    list_display = ("title", "value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at")
     list_filter = [SupplierListFilter]
 
     def total(self, obj):
@@ -81,4 +83,4 @@ class ContributionAdmin(admin.ModelAdmin):
 @admin.register(Supplier)
 class SupplierAdmin(admin.ModelAdmin):
     form = SupplierForm
-    pass
+    list_display = ("id", "name",)
