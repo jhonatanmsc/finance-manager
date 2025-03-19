@@ -7,54 +7,25 @@ from django.utils.translation import gettext_lazy as admin_text
 
 
 class GoalListFilter(admin.SimpleListFilter):
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
     title = admin_text("Objetivo")
-
-    # Parameter for the filter that will be used in the URL query.
     parameter_name = "goal"
 
     def lookups(self, request, model_admin):
-        """
-        Returns a list of tuples. The first element in each
-        tuple is the coded value for the option that will
-        appear in the URL query. The second element is the
-        human-readable name for the option that will appear
-        in the right sidebar.
-        """
         goals = Goal.objects.all()
         return [
             (goal.id, goal.title) for goal in goals
         ]
 
     def queryset(self, request, queryset):
-        """
-        Returns the filtered queryset based on the value
-        provided in the query string and retrievable via
-        `self.value()`.
-        """
-        # Compare the requested value (either '80s' or '90s')
-        # to decide how to filter the queryset.
         if self.value():
             return queryset.filter(goal=self.value())
 
 
 class SupplierListFilter(admin.SimpleListFilter):
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
     title = admin_text("Fornecedor")
-
-    # Parameter for the filter that will be used in the URL query.
     parameter_name = "supplier"
 
     def lookups(self, request, model_admin):
-        """
-        Returns a list of tuples. The first element in each
-        tuple is the coded value for the option that will
-        appear in the URL query. The second element is the
-        human-readable name for the option that will appear
-        in the right sidebar.
-        """
         suppliers = Supplier.objects.all()
         return [
             ("Nenhum", "Nenhum"),
@@ -62,13 +33,6 @@ class SupplierListFilter(admin.SimpleListFilter):
         ]
 
     def queryset(self, request, queryset):
-        """
-        Returns the filtered queryset based on the value
-        provided in the query string and retrievable via
-        `self.value()`.
-        """
-        # Compare the requested value (either '80s' or '90s')
-        # to decide how to filter the queryset.
         if self.value():
             if self.value() == "Nenhum":
                 return queryset.filter(supplier=None)

@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 
+from credits.models import Credit
 from debts.models import Debt
 from goals.models import Goal, Contribution
 from parameters.models import Parameter
@@ -21,8 +22,6 @@ class DashboardView(TemplateView):
             return redirect(urls.reverse('admin:login'))
         current_month = datetime.now().month
         current_year = datetime.now().year
-        last_9_months = get_last_9_months()
-        past_months = get_last_9_months('number')
         recurrence_debts = (
             Debt.objects
             .filter(user=self.request.user)
@@ -39,43 +38,22 @@ class DashboardView(TemplateView):
             )
             .exclude(Q(recurrence=RecurrenceEnum.NONE) | Q(payment_method__iexact=PaymentMethod.CASH.value))
         )
-        last_debts = (
-            Debt.objects
-            .filter(
-                user=self.request.user,
-                created_at__month__in=past_months,
-                created_at__year=current_year
-            )
-            .exclude(Q(recurrence=RecurrenceEnum.NONE) | Q(payment_method__iexact=PaymentMethod.CASH.value))
-            .order_by('-created_at')
-        )
-        last_debts_total = []
-        for m in past_months:
-            total_month = 0
-            for deb in last_debts:
-                if m == deb.created_at.month:
-                    total_month += deb.value
-            last_debts_total.append(float(total_month))
 
         debts = recurrence_debts.union(extra_debts)
         debts = sum([debt.value for debt in debts])
         emergency_fund = Parameter.objects.filter(user=self.request.user, name='reserva_1').first()
         emergency_fund = emergency_fund.index
-        accounting_fee = Parameter.objects.filter(user=self.request.user, name='contabilidade').first()
-        accounting_fee = float(accounting_fee.index)
         goal = Goal.objects.filter(user=self.request.user, title="Reserva de Médio prazo").first()
-        context['sidebar_option'] = 'dashboard'
-        context['debts'] = real_currency(debts)
-        context['emergency_fund'] = real_currency(debts * emergency_fund)
-        context['mid_fund'] = real_currency(goal.value)
-        context['long_fund'] = '- -'
-        context['last_9_months'] = last_9_months
-        context['debt_history'] = last_debts_total
-        context['current_year'] = current_year
-        context['ipca'] = get_ipca(f'01/01/{current_year}', datetime.now().strftime("%d/%m/%Y"))
-        min_salary = get_min_salary(f'01/01/{current_year}', datetime.now().strftime("%d/%m/%Y"))
-        context['min_salary'] = real_currency(min_salary)
-        context['accounting_fee'] = real_currency(min_salary * accounting_fee)
+        credit_list = Credit.objects.filter(user=self.request.user)
+        total_credit = sum([cred.limit for cred in credit_list])
+
+        context['data'] = [
+            {"title": "Gasto mensal esperado", "total": real_currency(debts), "variation": 0},
+            {"title": "Reserva de emergência", "total": real_currency(debts * emergency_fund), "variation": 0},
+            {"title": "Reserva médio prazo", "total": real_currency(goal.value), "variation": 0},
+            {"title": "Reserva longo prazo", "total": '- -', "variation": 0},
+            {"title": "Total de crédito", "total": real_currency(total_credit), "variation": 0},
+        ]
         return context
 
 

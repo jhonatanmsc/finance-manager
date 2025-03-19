@@ -6,8 +6,6 @@ from django.db import models
 from src.enums import RecurrenceEnum, PayerTypeEnum
 
 
-# Create your models here.
-
 class Earning(models.Model):
     __tablename__ = 'earnings'
     title = models.CharField(max_length=100, verbose_name="Título")
