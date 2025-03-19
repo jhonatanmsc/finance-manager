@@ -6,6 +6,39 @@ from src.utils import real_currency
 from django.utils.translation import gettext_lazy as admin_text
 
 
+class GoalListFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = admin_text("Objetivo")
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = "goal"
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        goals = Goal.objects.all()
+        return [
+            (goal.id, goal.title) for goal in goals
+        ]
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        # Compare the requested value (either '80s' or '90s')
+        # to decide how to filter the queryset.
+        if self.value():
+            return queryset.filter(goal=self.value())
+
+
 class SupplierListFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
@@ -45,7 +78,11 @@ class SupplierListFilter(admin.SimpleListFilter):
 @admin.register(Goal)
 class GoalAdmin(admin.ModelAdmin):
     exclude = ('user',)
-    # readonly_fields = ("total",)
+    list_display = ("title", "total",)
+    readonly_fields = ("total_descr",)
+
+    def total(self, obj):
+        return f"R$ {real_currency(obj.total)} / R$ {real_currency(obj.value)}"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -62,8 +99,8 @@ class GoalAdmin(admin.ModelAdmin):
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
     exclude = ('user',)
-    list_display = ("title", "value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at")
-    list_filter = [SupplierListFilter]
+    list_display = ("title", "description","value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at")
+    list_filter = [SupplierListFilter, GoalListFilter]
 
     def total(self, obj):
         return real_currency(obj.quantity * obj.value)
@@ -83,4 +120,7 @@ class ContributionAdmin(admin.ModelAdmin):
 @admin.register(Supplier)
 class SupplierAdmin(admin.ModelAdmin):
     form = SupplierForm
-    list_display = ("id", "name",)
+    list_display = ("id", "name", "total")
+
+    def total(self, obj):
+        return "R$ " + real_currency(obj.total)

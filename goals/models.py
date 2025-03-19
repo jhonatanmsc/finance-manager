@@ -16,6 +16,13 @@ class Supplier(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
 
+    @property
+    def total(self):
+        total_value = 0
+        for con in self.contributions.all():
+            total_value += con.total
+        return total_value
+
     def __str__(self):
         return f"{self.name}"
 
@@ -37,19 +44,24 @@ class Goal(models.Model):
     concluded_at = models.DateTimeField(null=True, blank=True, verbose_name="Concluído em")
     canceled_at = models.DateTimeField(null=True, blank=True, verbose_name="Cancelado em")
 
-    # @property
-    # def total(self):
-    #     contrib = {}
-    #     total_value = 0
-    #     for con in self.contributions.all():
-    #         if contrib.get(con.group_name):
-    #             contrib[con.group_name] += con.total
-    #         else:
-    #             contrib[con.group_name] = con.total
-    #         total_value += con.total
-    #     result = "\n".join([f"{k}: {real_currency(contrib[k])}" for k in contrib])
-    #     result += f"\n\n*Total*: R$ {real_currency(total_value)}"
-    #     return result
+    @property
+    def total(self):
+        total_value = sum([con.total for con in self.contributions.all()])
+        return total_value
+
+    @property
+    def total_descr(self):
+        contrib = {}
+        total_value = 0
+        for con in self.contributions.all():
+            if contrib.get(con.group_name):
+                contrib[con.group_name] += con.total
+            else:
+                contrib[con.group_name] = con.total
+            total_value += con.total
+        result = "\n".join([f"{k}: {real_currency(contrib[k])}" for k in contrib])
+        result += f"\n\n*Total*: R$ {real_currency(total_value)}"
+        return result
 
     def set_history(self, history):
         self.history = json.dumps(history)
@@ -80,7 +92,7 @@ class Contribution(models.Model):
         Goal, on_delete=models.CASCADE, related_name="contributions", verbose_name="Objetivo"
     )
     concluded_at = models.DateTimeField(null=True, blank=True, verbose_name="Executado em")
-    supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Fornecedor", related_name="contributions_new")
+    supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Fornecedor", related_name="contributions")
     group_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Grupo")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
 
