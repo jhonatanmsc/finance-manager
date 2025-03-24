@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
 
 
 class CustomModelAdmin(admin.ModelAdmin):
@@ -9,7 +10,7 @@ class CustomModelAdmin(admin.ModelAdmin):
             return qs
         return qs.filter(users=request.user)
 
-    def save_model(self, request, obj, form, change):
+    def save_related(self, request, form, formset, change):
+        super().save_related(request, form, formset, change)
         if not change:
-            obj.users.add(request.user)
-        super().save_model(request, obj, form, change)
+            form.instance.users.add(request.user)
