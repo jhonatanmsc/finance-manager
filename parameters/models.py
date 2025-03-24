@@ -10,8 +10,7 @@ class Parameter(models.Model):
     index = models.DecimalField(max_digits=10, decimal_places=3, verbose_name="Índice")
     description = models.TextField(verbose_name='Descrição', null=True, blank=True)
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="configs", null=True,
-                             blank=True)
+    users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
 

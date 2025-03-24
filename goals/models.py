@@ -12,6 +12,7 @@ class Supplier(models.Model):
     description = models.TextField(verbose_name='Descrição', null=True, blank=True)
     rating = models.IntegerField(default=0, choices=[(i, f'{i/2} estrelas') for i in range(1, 10)],
                                  verbose_name="Avaliação")
+    users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
 
@@ -39,7 +40,7 @@ class Goal(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     target_date = models.DateField(null=True, blank=True, verbose_name="Estimativa de Conclusão")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="goals", null=True, blank=True)
+    users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     concluded_at = models.DateTimeField(null=True, blank=True, verbose_name="Concluído em")
     canceled_at = models.DateTimeField(null=True, blank=True, verbose_name="Cancelado em")
 
@@ -86,7 +87,7 @@ class Contribution(models.Model):
     description = models.TextField(verbose_name='Descrição', null=True, blank=True)
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="contributions", null=True, blank=True)
+    users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     goal = models.ForeignKey(
         Goal, on_delete=models.CASCADE, related_name="contributions", verbose_name="Objetivo"
     )

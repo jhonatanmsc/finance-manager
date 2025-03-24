@@ -16,7 +16,7 @@ class Earning(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     payment_day = models.CharField(max_length=5, null=True, blank=True, verbose_name="Dia do recebimento")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="earnings", null=True, blank=True)
+    users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
     expiration_date = models.DateTimeField(null=True, blank=True, verbose_name="Válido até")
     payer_type = models.CharField(max_length=50, choices=PayerTypeEnum.choices, default=PayerTypeEnum.PF, verbose_name="Tipo")

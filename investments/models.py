@@ -19,7 +19,7 @@ class Investment(models.Model):
     category = models.CharField(max_length=50, choices=InvestmentTypeEnum.choices, default=InvestmentTypeEnum.SAVINGS, verbose_name="Categoria")
     interest_rate = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Taxa de Juros")
     post_fixed_index = models.CharField(max_length=50, blank=True, null=True, help_text="Índice de pós-fixação, como Selic, IPCA, etc.")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="investments", null=True, blank=True)
+    users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     due_date = models.DateField(null=True, blank=True, verbose_name="Data de vencimento")
     deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
 

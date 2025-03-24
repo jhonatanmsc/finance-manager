@@ -18,7 +18,7 @@ class Debt(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     due_day = models.CharField(max_length=5, null=True, blank=True, verbose_name="Vencimento")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuário", related_name="debts", null=True, blank=True)
+    users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     due_date = models.DateField(null=True, blank=True, verbose_name="Data de vencimento")
     deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
     credit_card = models.ForeignKey(Credit, on_delete=models.CASCADE, verbose_name="Cartão de credito", related_name="debts", null=True, blank=True)

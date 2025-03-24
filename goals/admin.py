@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from goals.admin_forms import SupplierForm
 from goals.models import Goal, Contribution, Supplier
+from src.custom_admin import CustomModelAdmin
 from src.utils import real_currency
 from django.utils.translation import gettext_lazy as admin_text
 
@@ -40,51 +41,29 @@ class SupplierListFilter(admin.SimpleListFilter):
 
 
 @admin.register(Goal)
-class GoalAdmin(admin.ModelAdmin):
-    exclude = ('user',)
-    list_display = ("title", "total",)
-    readonly_fields = ("total_descr",)
+class GoalAdmin(CustomModelAdmin):
+    list_display = ("title", "total", )
+    readonly_fields = ("total_descr", )
 
     def total(self, obj):
         return f"R$ {real_currency(obj.total)} / R$ {real_currency(obj.value)}"
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(user=request.user)
-
-    def save_model(self, request, obj, form, change):
-        if not change:
-            obj.user = request.user
-        super().save_model(request, obj, form, change)
-
 
 @admin.register(Contribution)
-class ContributionAdmin(admin.ModelAdmin):
-    exclude = ('user',)
-    list_display = ("title", "description","value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at")
+class ContributionAdmin(CustomModelAdmin):
+    list_display = ("title", "description","value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at", )
+    # readonly_fields = ('users', )
     list_filter = [SupplierListFilter, GoalListFilter]
 
     def total(self, obj):
         return real_currency(obj.quantity * obj.value)
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(user=request.user)
-
-    def save_model(self, request, obj, form, change):
-        if not change:
-            obj.user = request.user
-        super().save_model(request, obj, form, change)
-
 
 @admin.register(Supplier)
-class SupplierAdmin(admin.ModelAdmin):
+class SupplierAdmin(CustomModelAdmin):
     form = SupplierForm
-    list_display = ("id", "name", "total")
+    list_display = ("id", "name", "total", )
+    # readonly_fields = ('users', )
 
     def total(self, obj):
         return "R$ " + real_currency(obj.total)

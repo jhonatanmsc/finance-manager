@@ -20,5 +20,5 @@ from dashboard.urls import urlpatterns as dashboard_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(dashboard_urls)),
+    # path('', include(dashboard_urls)),
 ]
