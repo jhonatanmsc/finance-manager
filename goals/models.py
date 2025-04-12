@@ -41,6 +41,7 @@ class Goal(models.Model):
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     target_date = models.DateField(null=True, blank=True, verbose_name="Estimativa de Conclusão")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
+    master = models.ForeignKey("Goal", null=True, blank=True, on_delete=models.PROTECT, verbose_name="Objetivo pai")
     concluded_at = models.DateTimeField(null=True, blank=True, verbose_name="Concluído em")
     canceled_at = models.DateTimeField(null=True, blank=True, verbose_name="Cancelado em")
 
