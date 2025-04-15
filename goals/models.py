@@ -42,8 +42,8 @@ class Goal(models.Model):
     target_date = models.DateField(null=True, blank=True, verbose_name="Estimativa de Conclusão")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     master = models.ForeignKey("Goal", null=True, blank=True, on_delete=models.PROTECT, verbose_name="Objetivo pai")
-    concluded_at = models.DateTimeField(null=True, blank=True, verbose_name="Concluído em")
-    canceled_at = models.DateTimeField(null=True, blank=True, verbose_name="Cancelado em")
+    concluded_at = models.DateField(null=True, blank=True, verbose_name="Concluído em")
+    canceled_at = models.DateField(null=True, blank=True, verbose_name="Cancelado em")
 
     @property
     def total(self):
@@ -92,7 +92,7 @@ class Contribution(models.Model):
     goal = models.ForeignKey(
         Goal, on_delete=models.CASCADE, related_name="contributions", verbose_name="Objetivo"
     )
-    concluded_at = models.DateTimeField(null=True, blank=True, verbose_name="Executado em")
+    concluded_at = models.DateField(null=True, blank=True, verbose_name="Executado em")
     supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Fornecedor", related_name="contributions")
     group_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Grupo")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
