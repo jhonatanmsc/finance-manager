@@ -42,11 +42,17 @@ class SupplierListFilter(admin.SimpleListFilter):
 
 @admin.register(Goal)
 class GoalAdmin(CustomModelAdmin):
-    list_display = ("title", "total", )
+    list_display = ("title", "progress", "total", "budget")
     readonly_fields = ("total_descr", )
 
     def total(self, obj):
-        return f"R$ {real_currency(obj.total)} / R$ {real_currency(obj.value)}"
+        return f"R$ {real_currency(obj.total)}"
+
+    def budget(self, obj):
+        return f"R$ {real_currency(obj.value)}"
+
+    def progress(self, obj):
+        return "%d%%" % ((obj.total / obj.value) * 100)
 
 
 @admin.register(Contribution)

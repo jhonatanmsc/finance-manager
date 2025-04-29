@@ -41,14 +41,15 @@ class Goal(models.Model):
     history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
     target_date = models.DateField(null=True, blank=True, verbose_name="Estimativa de Conclusão")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
-    master = models.ForeignKey("Goal", null=True, blank=True, on_delete=models.PROTECT, verbose_name="Objetivo pai")
+    master = models.ForeignKey("Goal", null=True, blank=True, on_delete=models.PROTECT, verbose_name="Objetivo pai", related_name="sub_goals")
     concluded_at = models.DateField(null=True, blank=True, verbose_name="Concluído em")
     canceled_at = models.DateField(null=True, blank=True, verbose_name="Cancelado em")
 
     @property
     def total(self):
+        lc_total = sum([go.total for go in self.sub_goals.all()])
         total_value = sum([con.total for con in self.contributions.all()])
-        return total_value
+        return total_value + lc_total
 
     @property
     def total_descr(self):
