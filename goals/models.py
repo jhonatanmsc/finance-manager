@@ -89,7 +89,6 @@ class Contribution(models.Model):
     description = models.TextField(verbose_name='Descrição', null=True, blank=True)
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
-    users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     goal = models.ForeignKey(
         Goal, on_delete=models.CASCADE, related_name="contributions", verbose_name="Objetivo"
     )

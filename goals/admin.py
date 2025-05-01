@@ -56,10 +56,16 @@ class GoalAdmin(CustomModelAdmin):
 
 
 @admin.register(Contribution)
-class ContributionAdmin(CustomModelAdmin):
+class ContributionAdmin(admin.ModelAdmin):
     list_display = ("title", "description","value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at", )
     # readonly_fields = ('users', )
     list_filter = [SupplierListFilter, GoalListFilter]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(goal__users=request.user)
 
     def total(self, obj):
         return real_currency(obj.quantity * obj.value)
