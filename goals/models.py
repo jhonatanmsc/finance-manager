@@ -1,4 +1,5 @@
 import json
+from django.utils import timezone
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -92,7 +93,7 @@ class Contribution(models.Model):
     goal = models.ForeignKey(
         Goal, on_delete=models.CASCADE, related_name="contributions", verbose_name="Objetivo"
     )
-    concluded_at = models.DateField(null=True, blank=True, verbose_name="Executado em")
+    concluded_at = models.DateField(default=timezone.now, null=True, blank=True, verbose_name="Executado em")
     supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Fornecedor", related_name="contributions")
     group_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Grupo")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
