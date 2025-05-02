@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
+from goals.models import Goal
+from goals.serializers import GoalSerializer
+
+
+class GoalViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = Goal.objects.all()
+    serializer_class = GoalSerializer
