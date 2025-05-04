@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from goals.admin_forms import SupplierForm
 from goals.models import Goal, Contribution, Supplier
-from src.custom_admin import CustomModelAdmin
+from src.model_admin import CustomModelAdmin
 from src.utils import real_currency
 from django.utils.translation import gettext_lazy as admin_text
 
@@ -46,7 +46,6 @@ class SupplierListFilter(admin.SimpleListFilter):
             return queryset.filter(supplier=self.value())
 
 
-@admin.register(Goal)
 class GoalAdmin(CustomModelAdmin):
     list_display = ("title", "progress", "total", "budget")
     readonly_fields = ("total_descr", )
@@ -62,7 +61,6 @@ class GoalAdmin(CustomModelAdmin):
         return "%d%%" % ((obj.total / obj.value) * 100)
 
 
-@admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
     list_display = ("title", "description","value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at", )
     list_filter = [SupplierListFilter, GoalListFilter]
@@ -78,7 +76,6 @@ class ContributionAdmin(admin.ModelAdmin):
         return real_currency(obj.quantity * obj.value)
 
 
-@admin.register(Supplier)
 class SupplierAdmin(CustomModelAdmin):
     form = SupplierForm
     list_display = ("id", "name", "total", )

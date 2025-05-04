@@ -1,9 +1,6 @@
 from django.contrib import admin
 
-from debts.models import Debt
 
-
-@admin.register(Debt)
 class DebtAdmin(admin.ModelAdmin):
     exclude = ('user',)
 
