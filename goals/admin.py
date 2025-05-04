@@ -7,6 +7,12 @@ from src.utils import real_currency
 from django.utils.translation import gettext_lazy as admin_text
 
 
+@admin.action(description="Calcular total")
+def calc_total(modeladmin, request, queryset):
+    total = round(sum([it.total for it in queryset]), 2)
+    modeladmin.message_user(request, f"Total: R$ {real_currency(total)}")
+
+
 class GoalListFilter(admin.SimpleListFilter):
     title = admin_text("Objetivo")
     parameter_name = "goal"
@@ -44,6 +50,7 @@ class SupplierListFilter(admin.SimpleListFilter):
 class GoalAdmin(CustomModelAdmin):
     list_display = ("title", "progress", "total", "budget")
     readonly_fields = ("total_descr", )
+    actions = [calc_total]
 
     def total(self, obj):
         return f"R$ {real_currency(obj.total)}"
@@ -58,8 +65,8 @@ class GoalAdmin(CustomModelAdmin):
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
     list_display = ("title", "description","value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at", )
-    # readonly_fields = ('users', )
     list_filter = [SupplierListFilter, GoalListFilter]
+    actions = [calc_total]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -75,7 +82,7 @@ class ContributionAdmin(admin.ModelAdmin):
 class SupplierAdmin(CustomModelAdmin):
     form = SupplierForm
     list_display = ("id", "name", "total", )
-    # readonly_fields = ('users', )
+    actions = [calc_total]
 
     def total(self, obj):
         return "R$ " + real_currency(obj.total)
