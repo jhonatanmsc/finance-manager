@@ -64,7 +64,7 @@ class GoalAdmin(CustomModelAdmin):
 
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
-    list_display = ("title", "description","value", "supplier", "goal", "group_name", "quantity", "total", "concluded_at", )
+    list_display = ("title", "description", "discount", "value", "quantity", "total", "supplier", "goal", "concluded_at", )
     list_filter = [SupplierListFilter, GoalListFilter]
     actions = [calc_total]
 
@@ -75,7 +75,7 @@ class ContributionAdmin(admin.ModelAdmin):
         return qs.filter(goal__users=request.user)
 
     def total(self, obj):
-        return real_currency(obj.quantity * obj.value)
+        return real_currency(obj.total)
 
 
 @admin.register(Supplier)
