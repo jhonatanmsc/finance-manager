@@ -104,7 +104,7 @@ class Contribution(models.Model):
 
     @property
     def total(self):
-        return self.quantity * self.value * Decimal(self.discount / 100)
+        return self.quantity * self.value * Decimal((100 - self.discount) / 100)
 
     def __str__(self):
         return f"{self.title} | {self.concluded_at.strftime('%d/%m/%Y')} | {self.group_name} |{self.goal.title}"
