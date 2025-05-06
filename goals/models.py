@@ -90,7 +90,7 @@ class Contribution(models.Model):
     __tablename__ = 'contributions'
     title = models.CharField(max_length=100)
     description = models.TextField(verbose_name='Descrição', null=True, blank=True)
-    discount = models.IntegerField(default=0, verbose_name="Desconto (%)")
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Desconto (%)")
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
