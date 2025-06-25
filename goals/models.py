@@ -1,4 +1,6 @@
 import json
+from decimal import Decimal
+
 from django.utils import timezone
 
 from django.contrib.auth.models import User
@@ -88,7 +90,9 @@ class Contribution(models.Model):
     __tablename__ = 'contributions'
     title = models.CharField(max_length=100)
     description = models.TextField(verbose_name='Descrição', null=True, blank=True)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Desconto (%)")
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor")
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     goal = models.ForeignKey(
         Goal, on_delete=models.CASCADE, related_name="contributions", verbose_name="Objetivo"
@@ -96,11 +100,11 @@ class Contribution(models.Model):
     concluded_at = models.DateField(default=timezone.now, null=True, blank=True, verbose_name="Executado em")
     supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Fornecedor", related_name="contributions")
     group_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Grupo")
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
+
 
     @property
     def total(self):
-        return self.quantity * self.value
+        return self.quantity * self.value * Decimal((100 - self.discount) / 100)
 
     def __str__(self):
         return f"{self.title} | {self.concluded_at.strftime('%d/%m/%Y')} | {self.group_name} |{self.goal.title}"

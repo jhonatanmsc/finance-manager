@@ -19,7 +19,15 @@ So activate it (Windows example)
 ```bash
   source venv/Scripts/activate.bat
 ```
-And at last but not least install the deps
+And install the deps
 ```bash
   pip install -r requirements.txt
+```
+Apply the migrations
+```bash
+  python manage.py migrate
+```
+Last but not least, run it
+```bash
+  python manage.py runserver 0.0.0.0
 ```
