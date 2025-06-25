@@ -1,4 +1,3 @@
-import json
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -77,16 +76,6 @@ class Goal(models.Model):
         result = "\n".join([f"{k}: {real_currency(contrib[k])}" for k in contrib])
         result += f"\n\n*Total*: R$ {real_currency(total_value)}"
         return result
-
-    def set_history(self, history):
-        self.history = json.dumps(history)
-
-    def get_history(self):
-        return json.loads(self.history)
-
-    def add_history(self, item):
-        self.history.append(item)
-        return self.history
 
     def __str__(self):
         return f"{self.title}"
