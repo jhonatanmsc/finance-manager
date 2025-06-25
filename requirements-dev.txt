@@ -1,1 +1,6 @@
 pre_commit==4.2.0
+isort==6.0.1
+pre-commit-hooks==5.0.0
+black==25.1.0
+autoflake==2.3.1
+flake8==7.3.0
