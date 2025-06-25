@@ -1,20 +1,22 @@
 import json
 from decimal import Decimal
 
-from django.utils import timezone
-
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 from src.utils import real_currency
 
 
 class Supplier(models.Model):
-    __tablename__ = 'suppliers'
+    __tablename__ = "suppliers"
     name = models.CharField(max_length=100)
-    description = models.TextField(verbose_name='Descrição', null=True, blank=True)
-    rating = models.IntegerField(default=0, choices=[(i, f'{i/2} estrelas') for i in range(1, 10)],
-                                 verbose_name="Avaliação")
+    description = models.TextField(verbose_name="Descrição", null=True, blank=True)
+    rating = models.IntegerField(
+        default=0,
+        choices=[(i, f"{i/2} estrelas") for i in range(1, 10)],
+        verbose_name="Avaliação",
+    )
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
@@ -35,16 +37,23 @@ class Supplier(models.Model):
 
 
 class Goal(models.Model):
-    __tablename__ = 'goals'
+    __tablename__ = "goals"
     title = models.CharField(max_length=100)
-    description = models.TextField(verbose_name='Descrição', null=True, blank=True)
+    description = models.TextField(verbose_name="Descrição", null=True, blank=True)
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor Total")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
-    history = models.CharField(max_length=200, null=True, blank=True, verbose_name="Histórico")
+    history = models.JSONField(null=True, blank=True, verbose_name="Histórico")
     target_date = models.DateField(null=True, blank=True, verbose_name="Estimativa de Conclusão")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
-    master = models.ForeignKey("Goal", null=True, blank=True, on_delete=models.PROTECT, verbose_name="Objetivo pai", related_name="sub_goals")
+    master = models.ForeignKey(
+        "Goal",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name="Objetivo pai",
+        related_name="sub_goals",
+    )
     concluded_at = models.DateField(null=True, blank=True, verbose_name="Concluído em")
     canceled_at = models.DateField(null=True, blank=True, verbose_name="Cancelado em")
 
@@ -87,20 +96,29 @@ class Goal(models.Model):
 
 
 class Contribution(models.Model):
-    __tablename__ = 'contributions'
+    __tablename__ = "contributions"
     title = models.CharField(max_length=100)
-    description = models.TextField(verbose_name='Descrição', null=True, blank=True)
+    description = models.TextField(verbose_name="Descrição", null=True, blank=True)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Desconto (%)")
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     goal = models.ForeignKey(
-        Goal, on_delete=models.CASCADE, related_name="contributions", verbose_name="Objetivo"
+        Goal,
+        on_delete=models.CASCADE,
+        related_name="contributions",
+        verbose_name="Objetivo",
     )
     concluded_at = models.DateField(default=timezone.now, null=True, blank=True, verbose_name="Executado em")
-    supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Fornecedor", related_name="contributions")
+    supplier = models.ForeignKey(
+        Supplier,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        verbose_name="Fornecedor",
+        related_name="contributions",
+    )
     group_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Grupo")
-
 
     @property
     def total(self):
