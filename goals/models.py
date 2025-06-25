@@ -43,7 +43,7 @@ class Goal(models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor Total")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
-    history = models.JSONField(null=True, blank=True, verbose_name="Histórico")
+    history = models.JSONField(default=list, null=False, blank=True, verbose_name="Histórico")
     target_date = models.DateField(null=True, blank=True, verbose_name="Estimativa de Conclusão")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     master = models.ForeignKey(
@@ -56,6 +56,7 @@ class Goal(models.Model):
     )
     concluded_at = models.DateField(null=True, blank=True, verbose_name="Concluído em")
     canceled_at = models.DateField(null=True, blank=True, verbose_name="Cancelado em")
+    deactivated_at = models.DateField(null=True, blank=True, verbose_name="Desativado em")
 
     @property
     def total(self):
