@@ -1,5 +1,5 @@
-from src.model_admin import CustomModelAdmin
+from src.admin.model_admin import CustomModelAdmin
 
 
 class InvestmentAdmin(CustomModelAdmin):
-    exclude = ('users',)
+    exclude = ("users",)

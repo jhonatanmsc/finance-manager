@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from parameters.models import Parameter
+from parameters.serializers import ParameterSerializer
+from src.api.base_view import BaseViewSet
 
-# Create your views here.
+
+class ParameterViewSet(BaseViewSet):
+    queryset = Parameter.objects.all()
+    serializer_class = ParameterSerializer
