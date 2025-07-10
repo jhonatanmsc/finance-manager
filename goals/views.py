@@ -12,6 +12,9 @@ class SupplierViewSet(BaseViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
 
+    def get_queryset(self):
+        return self.queryset
+
 
 class ContributionViewSet(BaseViewSet):
     queryset = Contribution.objects.all()
