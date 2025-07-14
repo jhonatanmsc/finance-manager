@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
-from src.utils import real_currency
-
 
 class Supplier(models.Model):
     __tablename__ = "suppliers"
@@ -28,7 +26,7 @@ class Supplier(models.Model):
         return total_value
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     class Meta:
         verbose_name = "Fornecedor"
@@ -62,20 +60,6 @@ class Goal(models.Model):
         lc_total = sum([go.total for go in self.sub_goals.all()])
         total_value = sum([con.total for con in self.contributions.all()])
         return total_value + lc_total
-
-    @property
-    def total_descr(self):
-        contrib = {}
-        total_value = 0
-        for con in self.contributions.all():
-            if contrib.get(con.group_name):
-                contrib[con.group_name] += con.total
-            else:
-                contrib[con.group_name] = con.total
-            total_value += con.total
-        result = "\n".join([f"{k}: {real_currency(contrib[k])}" for k in contrib])
-        result += f"\n\n*Total*: R$ {real_currency(total_value)}"
-        return result
 
     def __str__(self):
         return f"{self.title}"

@@ -43,7 +43,6 @@ class SupplierListFilter(admin.SimpleListFilter):
 
 class GoalAdmin(CustomModelAdmin):
     list_display = ("title", "progress", "total", "budget")
-    readonly_fields = ("total_descr",)
     actions = [calc_total]
 
     def total(self, obj):
