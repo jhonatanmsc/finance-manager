@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from django.db import models
-from requests import Response
 from rest_framework import permissions, serializers, viewsets
+from rest_framework.response import Response
 
 from src.api.serializers import HistoryItemSerializer
 from src.utils import br_tz
@@ -31,4 +31,4 @@ class BaseViewSet(viewsets.ModelViewSet):
         instance.history.append(hist_item.data)
         instance.deactivated_at = datetime.now(br_tz)
         instance.save()
-        return Response(self.serializer_class(instance).data, status=200)
+        return Response(self.serializer_class(instance).data, status=204)

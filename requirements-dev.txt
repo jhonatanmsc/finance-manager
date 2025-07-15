@@ -4,3 +4,6 @@ pre-commit-hooks==5.0.0
 black==25.1.0
 autoflake==2.3.1
 flake8==7.3.0
+pytest-django==4.11.1
+factory_boy==3.3.3
+pytest-cov==6.2.1
