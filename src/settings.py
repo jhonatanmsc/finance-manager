@@ -81,10 +81,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "libraries": {
-                "project_tags": "src.template_tags.common_tags",
-                "goal_tags": "src.template_tags.goal_tags",
-            },
         },
     },
 ]

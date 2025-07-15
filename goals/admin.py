@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as admin_text
 
-from goals.admin_forms import SupplierForm
 from goals.models import Goal, Supplier
 from src.admin.model_admin import CustomModelAdmin
 from src.utils import real_currency
@@ -81,7 +80,6 @@ class ContributionAdmin(admin.ModelAdmin):
 
 
 class SupplierAdmin(CustomModelAdmin):
-    form = SupplierForm
     list_display = (
         "id",
         "name",
