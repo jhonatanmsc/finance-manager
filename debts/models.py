@@ -15,7 +15,6 @@ class Debt(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
-    history = models.JSONField(default=list, null=False, blank=True, verbose_name="Histórico")
     due_day = models.CharField(max_length=5, null=True, blank=True, verbose_name="Vencimento")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     due_date = models.DateField(null=True, blank=True, verbose_name="Data de vencimento")

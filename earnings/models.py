@@ -14,7 +14,6 @@ class Earning(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
-    history = models.JSONField(default=list, null=False, blank=True, verbose_name="Histórico")
     payment_day = models.CharField(max_length=5, null=True, blank=True, verbose_name="Dia do recebimento")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")

@@ -15,7 +15,6 @@ class Credit(models.Model):
         max_length=100, choices=CreditTypeEnum.choices, default=CreditTypeEnum.CARD, verbose_name="Categoria"
     )
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
-    history = models.JSONField(default=list, null=False, blank=True, verbose_name="Histórico")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name="Desativado em")
 
