@@ -14,7 +14,6 @@ class EarningSerializer(serializers.ModelSerializer):
             "recurrence",
             "created_at",
             "updated_at",
-            "history",
             "payment_day",
             "users",
             "expiration_date",

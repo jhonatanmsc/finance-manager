@@ -13,7 +13,6 @@ class CreditSerializer(serializers.ModelSerializer):
             "due_date",
             "category",
             "updated_at",
-            "history",
             "users",
         ]
 

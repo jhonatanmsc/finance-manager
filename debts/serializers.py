@@ -14,7 +14,6 @@ class DebtSerializer(serializers.ModelSerializer):
             "recurrence",
             "created_at",
             "updated_at",
-            "history",
             "due_day",
             "users",
             "due_date",
