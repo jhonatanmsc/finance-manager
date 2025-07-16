@@ -4,8 +4,10 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
+from src.base_model import BaseModel
 
-class Supplier(models.Model):
+
+class Supplier(BaseModel):
     __tablename__ = "suppliers"
     name = models.CharField(max_length=100)
     description = models.TextField(verbose_name="Descrição", null=True, blank=True)
@@ -15,8 +17,6 @@ class Supplier(models.Model):
         verbose_name="Avaliação",
     )
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
 
     @property
     def total(self):
@@ -33,13 +33,11 @@ class Supplier(models.Model):
         verbose_name_plural = "Fornecedores"
 
 
-class Goal(models.Model):
+class Goal(BaseModel):
     __tablename__ = "goals"
     title = models.CharField(max_length=100)
     description = models.TextField(verbose_name="Descrição", null=True, blank=True)
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor Total")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Modificado em")
     target_date = models.DateField(null=True, blank=True, verbose_name="Estimativa de Conclusão")
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
     master = models.ForeignKey(
@@ -61,21 +59,20 @@ class Goal(models.Model):
         return total_value + lc_total
 
     def __str__(self):
-        return f"{self.title}"
+        return self.title
 
     class Meta:
         verbose_name = "Objetivo"
         verbose_name_plural = "Objetivos"
 
 
-class Contribution(models.Model):
+class Contribution(BaseModel):
     __tablename__ = "contributions"
     title = models.CharField(max_length=100)
     description = models.TextField(verbose_name="Descrição", null=True, blank=True)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Desconto (%)")
     value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.0, verbose_name="Quantidade")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     goal = models.ForeignKey(
         Goal,
         on_delete=models.CASCADE,
