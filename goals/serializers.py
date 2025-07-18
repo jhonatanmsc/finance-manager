@@ -13,7 +13,6 @@ class GoalSerializer(serializers.ModelSerializer):
             "value",
             "created_at",
             "updated_at",
-            "history",
             "target_date",
             "users",
             "master",
@@ -65,7 +64,6 @@ class ContributionSerializer(serializers.ModelSerializer):
             "goal",
             "concluded_at",
             "supplier",
-            "group_name",
             "total",
         ]
 
