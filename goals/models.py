@@ -13,7 +13,7 @@ class Supplier(BaseModel):
     description = models.TextField(verbose_name="Descrição", null=True, blank=True)
     rating = models.IntegerField(
         default=0,
-        choices=[(i, f"{i/2} estrelas") for i in range(1, 10)],
+        choices=[(i, f"{i} estrelas") for i in range(1, 5)],
         verbose_name="Avaliação",
     )
     users = models.ManyToManyField(User, verbose_name="Usuários", blank=True)
