@@ -48,4 +48,4 @@ def test_delete_goal(auth_client, goal_1):
     response = auth_client.delete(url, data=data)
     assert response.status_code == 204
     goal_1.refresh_from_db()
-    assert len(goal_1.history) == 1
+    assert len(goal_1.list_log_entries()) == 1
