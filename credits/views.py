@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from credits.models import Credit
+from credits.serializers import CreditSerializer
+from src.api.base_view import BaseViewSet
 
-# Create your views here.
+
+class CreditViewSet(BaseViewSet):
+    queryset = Credit.objects.all()
+    serializer_class = CreditSerializer

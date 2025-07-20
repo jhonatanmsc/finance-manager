@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from debts.models import Debt
+from debts.serializers import DebtSerializer
+from src.api.base_view import BaseViewSet
 
-# Create your views here.
+
+class DebtViewSet(BaseViewSet):
+    queryset = Debt.objects.all()
+    serializer_class = DebtSerializer

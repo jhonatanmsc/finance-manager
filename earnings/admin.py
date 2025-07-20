@@ -1,9 +1,6 @@
 from django.contrib import admin
 
-from earnings.models import Earning
 
-
-@admin.register(Earning)
 class EarningsAdmin(admin.ModelAdmin):
     exclude = ('user',)
 

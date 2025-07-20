@@ -1,10 +1,9 @@
 from django.contrib import admin
-
-from goals.admin_forms import SupplierForm
-from goals.models import Goal, Contribution, Supplier
-from src.custom_admin import CustomModelAdmin
-from src.utils import real_currency
 from django.utils.translation import gettext_lazy as admin_text
+
+from goals.models import Goal, Supplier
+from src.admin.model_admin import CustomModelAdmin
+from src.utils import real_currency
 
 
 @admin.action(description="Calcular total")
@@ -19,9 +18,7 @@ class GoalListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         goals = Goal.objects.all()
-        return [
-            (goal.id, goal.title) for goal in goals
-        ]
+        return [(goal.id, goal.title) for goal in goals]
 
     def queryset(self, request, queryset):
         if self.value():
@@ -34,10 +31,7 @@ class SupplierListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         suppliers = Supplier.objects.all()
-        return [
-            ("Nenhum", "Nenhum"),
-            *[(supplier.id, supplier.name) for supplier in suppliers]
-        ]
+        return [("Nenhum", "Nenhum"), *[(supplier.id, supplier.name) for supplier in suppliers]]
 
     def queryset(self, request, queryset):
         if self.value():
@@ -46,10 +40,8 @@ class SupplierListFilter(admin.SimpleListFilter):
             return queryset.filter(supplier=self.value())
 
 
-@admin.register(Goal)
 class GoalAdmin(CustomModelAdmin):
     list_display = ("title", "progress", "total", "budget")
-    readonly_fields = ("total_descr", )
     actions = [calc_total]
 
     def total(self, obj):
@@ -62,9 +54,18 @@ class GoalAdmin(CustomModelAdmin):
         return "%d%%" % ((obj.total / obj.value) * 100)
 
 
-@admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
-    list_display = ("title", "description", "discount", "value", "quantity", "total", "supplier", "goal", "concluded_at", )
+    list_display = (
+        "title",
+        "description",
+        "discount",
+        "value",
+        "quantity",
+        "total",
+        "supplier",
+        "goal",
+        "concluded_at",
+    )
     list_filter = [SupplierListFilter, GoalListFilter]
     actions = [calc_total]
 
@@ -78,10 +79,12 @@ class ContributionAdmin(admin.ModelAdmin):
         return real_currency(obj.total)
 
 
-@admin.register(Supplier)
 class SupplierAdmin(CustomModelAdmin):
-    form = SupplierForm
-    list_display = ("id", "name", "total", )
+    list_display = (
+        "id",
+        "name",
+        "total",
+    )
     actions = [calc_total]
 
     def total(self, obj):
