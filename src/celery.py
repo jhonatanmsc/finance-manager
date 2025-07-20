@@ -12,9 +12,16 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    "print-message-ten-seconds": {
-        "task": "goals.tasks.store_supplier_sales_summary",
-        "schedule": crontab(minute="*"),
+    "store-supplier-contributions-summary": {
+        "task": "goals.tasks.store_supplier_totals_summary",
+        "schedule": crontab(minute="*/3"),
+    },
+}
+
+app.conf.beat_schedule = {
+    "store-goal-contributions-summary": {
+        "task": "goals.tasks.store_goal_totals_summary",
+        "schedule": crontab(minute="*/4"),
     },
 }
 

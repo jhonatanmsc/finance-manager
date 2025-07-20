@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.db import models
 from django.utils import timezone
 
@@ -20,9 +21,7 @@ class Supplier(BaseModel):
 
     @property
     def total(self):
-        total_value = 0
-        for con in self.contributions.all():
-            total_value += con.total
+        total_value = cache.get(f"supplier:{self.id}:total_sales")
         return total_value
 
     def __str__(self):
