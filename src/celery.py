@@ -1,19 +1,24 @@
+import os
+
 from celery import Celery
 from celery.schedules import crontab
+from src.settings import TIME_ZONE
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "src.settings")
 app = Celery("src")
+app.conf.enable_utc = False
+app.conf.update(timezone=TIME_ZONE)
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
+
+app.conf.beat_schedule = {
+    "print-message-ten-seconds": {
+        "task": "goals.tasks.store_supplier_sales_summary",
+        "schedule": crontab(minute="*"),
+    },
+}
 
 
 @app.task(bind=True)
 def debug_task(self):
     print("Request: {0!r}".format(self.request))
-
-
-app.conf.beat_schedule = {
-    "print-message-ten-seconds": {
-        "task": "store_supplier_sales_summary",
-        "schedule": crontab(minute="*"),
-    },
-}

@@ -32,13 +32,15 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 DEBUG = env("DEBUG")
 SECRET_KEY = env("SECRET_KEY")
+
 CELERY_BROKER_URL = env("REDIS_URL", default="redis://localhost:6379/0")
 CELERY_BROKER_URL2 = env("REDIS_URL", default="redis://localhost:6379/1")
 CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://localhost:6379/0")
-CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_TIMEZONE = "America/Sao_Paulo"
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
 
 ALLOWED_HOSTS = ["0.0.0.0", "*"]
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
@@ -58,6 +60,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "django_celery_beat",
+    "django_celery_results",
     "corsheaders",
     # my apps
     "earnings",

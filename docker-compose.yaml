@@ -18,28 +18,28 @@ services:
 
   worker:
     build: .
-    command: celery -A src worker --loglevel=info
+    command: celery -A src worker -E -l debug
     volumes:
       - .:/app
     environment:
       SECRET_KEY: ${SECRET_KEY}
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/financeman"
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
-      REDIS_URL: ${REDIS_URL}
+      REDIS_URL: "redis://redis:6379/0"
     depends_on:
       - db
       - redis
 
   beat:
     build: .
-    command: celery -A src beat --loglevel=info
+    command: celery -A src beat --loglevel=debug
     volumes:
       - .:/app
     environment:
       SECRET_KEY: ${SECRET_KEY}
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/financeman"
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
-      REDIS_URL: ${REDIS_URL}
+      REDIS_URL: "redis://redis:6379/0"
     depends_on:
       - db
       - redis

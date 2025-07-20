@@ -3,3 +3,6 @@ install:
 
 run:
 	python manage.py runserver 0.0.0.0:8000
+
+start_containers:
+	docker compose --env-file .env up --build

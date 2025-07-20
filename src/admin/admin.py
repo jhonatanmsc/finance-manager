@@ -2,6 +2,11 @@ from django.contrib import admin
 from django.contrib.admin import sites
 from django.contrib.auth.admin import GroupAdmin, UserAdmin
 from django.contrib.auth.models import Group, User
+from django_celery_beat.models import (
+    CrontabSchedule,
+    IntervalSchedule,
+    PeriodicTask,
+)
 
 from credits.admin import CreditAdmin
 from credits.models import Credit
@@ -41,3 +46,6 @@ admin_site.register(Contribution, ContributionAdmin)
 admin_site.register(Supplier, SupplierAdmin)
 admin_site.register(Investment, InvestmentAdmin)
 admin_site.register(Parameter, ParameterAdmin)
+admin.site.register(PeriodicTask)
+admin.site.register(IntervalSchedule)
+admin.site.register(CrontabSchedule)
