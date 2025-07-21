@@ -16,12 +16,13 @@ app.conf.beat_schedule = {
         "task": "goals.tasks.store_supplier_totals_summary",
         "schedule": crontab(minute="*/3"),
     },
-}
-
-app.conf.beat_schedule = {
     "store-goal-contributions-summary": {
         "task": "goals.tasks.store_goal_totals_summary",
         "schedule": crontab(minute="*/4"),
+    },
+    "store-children-goals-totals-summary": {
+        "task": "goals.tasks.store_children_goals_totals_summary",
+        "schedule": crontab(minute="*/5"),
     },
 }
 

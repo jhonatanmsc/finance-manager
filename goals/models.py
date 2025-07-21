@@ -21,7 +21,7 @@ class Supplier(BaseModel):
 
     @property
     def total(self):
-        total_value = cache.get(f"supplier:{self.id}:total_sales")
+        total_value = cache.get(f"supplier:{self.id}:total_contributions", 0)
         return total_value
 
     def __str__(self):
@@ -53,9 +53,9 @@ class Goal(BaseModel):
 
     @property
     def total(self):
-        lc_total = sum([go.total for go in self.sub_goals.all()])
-        total_value = sum([con.total for con in self.contributions.all()])
-        return total_value + lc_total
+        lc_total = cache.get(f"goal:{self.id}:children_total", 0)
+        total_contributions = cache.get(f"goal:{self.id}:total_contributions", 0)
+        return total_contributions + lc_total
 
     def __str__(self):
         return self.title

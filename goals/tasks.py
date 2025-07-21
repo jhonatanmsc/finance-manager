@@ -2,7 +2,7 @@ from django.core.cache import cache
 from django.db.models import DecimalField, ExpressionWrapper, F, Sum
 
 from celery import shared_task
-from goals.models import Contribution
+from goals.models import Contribution, Goal
 from src.settings import logger
 
 
@@ -50,5 +50,29 @@ def store_goal_totals_summary():
     cache.set("goal_totals", goal_totals)
 
     logger.info("Goal's contributions total stored")
+
+    return goal_totals
+
+
+@shared_task
+def store_children_goals_totals_summary():
+    goal_totals = {}
+
+    # Efficient aggregation query
+    goals = Goal.objects.filter(master__isnull=False).only("id", "master")
+
+    # Store in Redis
+    for goal in goals:
+        if goal_totals.get(goal.master):
+            goal_totals[goal.master_id] += cache.get(f"goal:{goal.master_id}:total_contributions")
+        else:
+            goal_totals[goal.master_id] = cache.get(f"goal:{goal.master_id}:total_contributions")
+
+    logger.info(f"Goal's children total stored {goal_totals}")
+
+    for goal in goal_totals:
+        cache.set(f"goal:{goal}:children_total", goal_totals[goal])
+
+    logger.info("Goal's children total stored")
 
     return goal_totals
