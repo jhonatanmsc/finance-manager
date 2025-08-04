@@ -47,8 +47,16 @@ class ContributionViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.queryset
-        goal_ids = [int(id) for id in request.query_params.get("goals[]", [])]
-        supplier_ids = [int(id) for id in request.query_params.get("suppliers[]", [])]
+        if type(request.query_params.get("goals[]")) is str:
+            goal_ids = [request.query_params.get("goals[]")]
+        else:
+            goal_ids = [int(id) for id in request.query_params.get("goals[]", [])]
+
+        if type(request.query_params.get("suppliers[]")) is str:
+            supplier_ids = [request.query_params.get("suppliers[]")]
+        else:
+            supplier_ids = [int(id) for id in request.query_params.get("suppliers[]", [])]
+
         if goal_ids:
             queryset = queryset.filter(goal__id__in=goal_ids)
         if supplier_ids:
