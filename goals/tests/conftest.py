@@ -31,7 +31,7 @@ def goal_1(super_user):
 
 
 @pytest.fixture
-def suppler_1(super_user):
+def supplier_1(super_user):
     sup = SupplierFactory()
     sup.users.set([super_user])
     return sup
