@@ -11,7 +11,6 @@ class ParameterSerializer(serializers.ModelSerializer):
             "name",
             "index",
             "description",
-            "history",
             "users",
             "created_at",
         ]
