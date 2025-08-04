@@ -1,3 +1,5 @@
+from rest_framework import viewsets
+
 from goals.models import Contribution, Goal, Supplier
 from goals.serializers import ContributionSerializer, GoalSerializer, SupplierSerializer
 from src.api.base_view import BaseViewSet
@@ -36,7 +38,7 @@ class SupplierViewSet(BaseViewSet):
         return self.get_paginated_response(queryset)
 
 
-class ContributionViewSet(BaseViewSet):
+class ContributionViewSet(viewsets.ModelViewSet):
     queryset = Contribution.objects.all()
     serializer_class = ContributionSerializer
 
